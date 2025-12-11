@@ -15,6 +15,13 @@ log_info "Starting Docker installation..."
 log_info "Removing old Docker versions..."
 apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
 
+# Clean up any existing Docker repository configurations
+log_info "Cleaning up existing Docker repository configurations..."
+rm -f /etc/apt/sources.list.d/docker.list
+rm -f /etc/apt/keyrings/docker.gpg
+rm -f /etc/apt/keyrings/docker.asc
+rm -f /usr/share/keyrings/docker-archive-keyring.gpg
+
 # Install prerequisites
 log_info "Installing prerequisites..."
 apt-get update -qq
@@ -27,10 +34,8 @@ apt-get install -y \
 # Add Docker's official GPG key
 log_info "Adding Docker GPG key..."
 install -m 0755 -d /etc/apt/keyrings
-if [ ! -f /etc/apt/keyrings/docker.gpg ]; then
-    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    chmod a+r /etc/apt/keyrings/docker.gpg
-fi
+curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
 
 # Add Docker repository
 log_info "Adding Docker repository..."

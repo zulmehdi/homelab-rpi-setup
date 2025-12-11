@@ -30,11 +30,18 @@ GITLAB_COMPOSE_FILE="${GITLAB_DIR}/docker-compose.yml"
 log_info "Creating GitLab directory structure..."
 mkdir -p "$GITLAB_DIR"/{config,logs,data}
 
+# Check if port 22 is in use (SSH)
+GITLAB_SSH_PORT=2222
+if netstat -tuln 2>/dev/null | grep -q ':22 ' || ss -tuln 2>/dev/null | grep -q ':22 '; then
+    log_info "Port 22 is already in use (likely SSH). Using port $GITLAB_SSH_PORT for GitLab SSH instead."
+else
+    GITLAB_SSH_PORT=22
+    log_info "Port 22 is available. Using it for GitLab SSH."
+fi
+
 # Create docker-compose.yml for GitLab
 log_info "Creating GitLab Docker Compose configuration..."
-cat > "$GITLAB_COMPOSE_FILE" << 'EOF'
-version: '3.8'
-
+cat > "$GITLAB_COMPOSE_FILE" << EOF
 services:
   gitlab:
     image: gitlab/gitlab-ce:latest
@@ -44,7 +51,7 @@ services:
     ports:
       - '80:80'
       - '443:443'
-      - '22:22'
+      - '${GITLAB_SSH_PORT}:22'
     volumes:
       - './config:/etc/gitlab'
       - './logs:/var/log/gitlab'
@@ -53,7 +60,7 @@ services:
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://gitlab.local'
-        gitlab_rails['gitlab_shell_ssh_port'] = 22
+        gitlab_rails['gitlab_shell_ssh_port'] = ${GITLAB_SSH_PORT}
 EOF
 
 log_info "Starting GitLab container..."
@@ -71,6 +78,8 @@ if docker ps | grep -q gitlab; then
     log_info "Initial root password will be available in: $GITLAB_DIR/config/initial_root_password"
     log_info "Retrieve it with: sudo cat $GITLAB_DIR/config/initial_root_password"
     log_info "Access GitLab at: http://$(hostname -I | awk '{print $1}')"
+    log_info "GitLab SSH port: $GITLAB_SSH_PORT"
+    log_info "Note: If using port $GITLAB_SSH_PORT, configure GitLab to use this port for SSH clones"
 else
     log_info "WARNING: GitLab container may not have started properly. Check logs for details."
 fi
