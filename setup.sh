@@ -120,6 +120,53 @@ load_config() {
     fi
 }
 
+# Check if a package is already installed
+is_package_installed() {
+    local package_name="$1"
+    
+    case "$package_name" in
+        docker)
+            if command -v docker &> /dev/null && docker --version &> /dev/null && docker compose version &> /dev/null; then
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        kind)
+            if command -v kind &> /dev/null && kind version &> /dev/null; then
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        kubectl)
+            if command -v kubectl &> /dev/null && kubectl version --client &> /dev/null; then
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        gitlab)
+            if docker ps --format '{{.Names}}' 2>/dev/null | grep -q "^gitlab$"; then
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        gitlab-runner)
+            if command -v gitlab-runner &> /dev/null && gitlab-runner --version &> /dev/null; then
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        *)
+            # For unknown packages, assume not installed
+            return 1
+            ;;
+    esac
+}
+
 # Install a package
 install_package() {
     local package_name="$1"
@@ -128,6 +175,12 @@ install_package() {
     if [ ! -f "$package_script" ]; then
         log_error "Package script not found: $package_script"
         return 1
+    fi
+    
+    # Check if package is already installed
+    if is_package_installed "$package_name"; then
+        log_info "Package $package_name is already installed. Skipping."
+        return 0
     fi
     
     if [ ! -x "$package_script" ]; then
