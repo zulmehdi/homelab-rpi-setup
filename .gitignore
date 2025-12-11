@@ -1,0 +1,21 @@
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# GitLab data (if running locally)
+/opt/gitlab/
+
+# Credentials (if any)
+*credentials*
+*secret*
+*password*
+

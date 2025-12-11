@@ -1,0 +1,27 @@
+# Raspberry Pi 5 Setup Configuration File - Example
+# Copy this file to config.conf and customize for your needs
+
+# Packages to install (one per line, list below PACKAGES=)
+# Available packages: docker, kind, kubectl, gitlab, gitlab-runner
+# Example with all packages:
+PACKAGES=
+docker
+kind
+kubectl
+gitlab
+gitlab-runner
+
+# Example with only Docker and kubectl:
+# PACKAGES=
+# docker
+# kubectl
+
+# Mounts to configure (one per line, list below MOUNTS=)
+# Mount scripts should be placed in the mounts/ directory
+# Example:
+# MOUNTS=
+# usb-drive
+# network-share
+# Leave empty if no mounts needed:
+MOUNTS=
+
