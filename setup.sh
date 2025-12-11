@@ -234,10 +234,30 @@ main() {
     check_root
     load_config
     
+    # Clean up Docker repository configurations if Docker is in the package list
+    # This prevents GPG key conflicts during apt-get update
+    if printf '%s\n' "${PACKAGES_ARRAY[@]}" | grep -q "^docker$"; then
+        log_info "Cleaning up existing Docker repository configurations..."
+        rm -f /etc/apt/sources.list.d/docker*.list
+        rm -f /etc/apt/keyrings/docker*.gpg
+        rm -f /etc/apt/keyrings/docker*.asc
+        rm -f /usr/share/keyrings/docker*.gpg
+        sed -i '/download\.docker\.com/d' /etc/apt/sources.list 2>/dev/null || true
+    fi
+    
     # Update system packages
     log_info "Updating system packages..."
+    set +e
     apt-get update -qq
-    apt-get upgrade -y -qq
+    UPDATE_EXIT=$?
+    set -e
+    
+    if [ $UPDATE_EXIT -ne 0 ]; then
+        log_warning "apt-get update had issues (exit code: $UPDATE_EXIT)"
+        log_warning "This may be due to repository conflicts. Continuing anyway..."
+    fi
+    
+    apt-get upgrade -y -qq || log_warning "apt-get upgrade had issues, continuing..."
     
     # Install packages
     if [ ${#PACKAGES_ARRAY[@]} -gt 0 ]; then
