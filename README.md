@@ -13,11 +13,16 @@ A modular bash script structure for setting up Raspberry Pi 5 running Raspberry 
 │   ├── kind.sh
 │   ├── kubectl.sh
 │   ├── gitlab.sh
-│   └── gitlab-runner.sh
+│   ├── gitlab-runner.sh
+│   ├── nvm.sh
+│   ├── node.sh
+│   ├── python.sh
+│   └── git.sh
 └── mounts/              # Mount configuration scripts
     ├── README.md
     ├── usb-drive.sh
-    └── network-share.sh
+    ├── network-share.sh
+    └── nvme-ssd.sh
 ```
 
 ## Quick Start
@@ -31,15 +36,20 @@ A modular bash script structure for setting up Raspberry Pi 5 running Raspberry 
    kubectl
    gitlab
    gitlab-runner
+   nvm
+   node
+   python
+   git
    
    # Specify which mounts to configure (one per line)
    MOUNTS=
    usb-drive
    network-share
+   nvme-ssd
    ```
 
 2. **Customize mount scripts** in the `mounts/` directory:
-   - Edit `usb-drive.sh` or `network-share.sh` with your specific device paths and mount points
+   - Edit `usb-drive.sh`, `network-share.sh`, or `nvme-ssd.sh` with your specific device paths and mount points
    - Or create new mount scripts following the same pattern
 
 3. **Run the setup script**:
@@ -57,6 +67,10 @@ Available packages:
 - `kubectl` - Kubernetes command-line tool
 - `gitlab` - GitLab CE (via Docker)
 - `gitlab-runner` - GitLab Runner
+- `nvm` - Node Version Manager (required for `node`)
+- `node` - Node.js (requires `nvm` to be installed first)
+- `python` - Python 3 with pip and venv
+- `git` - Git version control system
 
 To add a new package:
 1. Create a new script in `packages/` directory (e.g., `packages/my-package.sh`)
@@ -74,6 +88,7 @@ Mount scripts should be placed in the `mounts/` directory. Each script should:
 Example mount scripts are provided:
 - `usb-drive.sh` - Template for USB drive mounting
 - `network-share.sh` - Template for network share mounting (CIFS/NFS)
+- `nvme-ssd.sh` - Template for NVMe SSD mounting
 
 To add a new mount:
 1. Create a new script in `mounts/` directory (e.g., `mounts/my-mount.sh`)
@@ -109,6 +124,30 @@ To add a new mount:
 - Installs GitLab Runner from official repository
 - Supports ARM64 architecture
 - Requires manual registration with GitLab instance
+
+### NVM (Node Version Manager)
+- Installs NVM for managing Node.js versions
+- Supports system-wide (`/usr/local/nvm`) and user-specific (`$HOME/.nvm`) installations
+- Creates profile scripts for shell integration
+- Version: v0.39.7
+
+### Node.js
+- Installs Node.js using NVM
+- Installs latest LTS version by default
+- Sets installed version as default
+- Includes npm (Node Package Manager)
+- **Note**: Requires `nvm` to be installed first
+
+### Python
+- Installs Python 3 from system repositories
+- Includes pip (Python package manager)
+- Includes python3-venv for virtual environments
+- Includes python3-dev for development
+- Upgrades pip to latest version after installation
+
+### Git
+- Installs Git version control system
+- Installed from system repositories via apt-get
 
 ## Usage on Multiple Raspberry Pis
 
