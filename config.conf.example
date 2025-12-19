@@ -2,7 +2,8 @@
 # Copy this file to config.conf and customize for your needs
 
 # Packages to install (one per line, list below PACKAGES=)
-# Available packages: docker, kind, kubectl, gitlab, gitlab-runner
+# Available packages: docker, kind, kubectl, gitlab, gitlab-runner, nvm, node, python, git
+# Note: node requires nvm to be installed first
 # Example with all packages:
 PACKAGES=
 docker
@@ -10,6 +11,10 @@ kind
 kubectl
 gitlab
 gitlab-runner
+nvm
+node
+python
+git
 
 # Example with only Docker and kubectl:
 # PACKAGES=

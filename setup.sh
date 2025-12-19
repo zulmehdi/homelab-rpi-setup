@@ -160,6 +160,34 @@ is_package_installed() {
                 return 1
             fi
             ;;
+        nvm)
+            if [ -s "$HOME/.nvm/nvm.sh" ] || [ -s "/usr/local/nvm/nvm.sh" ]; then
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        node)
+            if command -v node &> /dev/null && node --version &> /dev/null; then
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        python)
+            if command -v python3 &> /dev/null && python3 --version &> /dev/null; then
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        git)
+            if command -v git &> /dev/null && git --version &> /dev/null; then
+                return 0
+            else
+                return 1
+            fi
+            ;;
         *)
             # For unknown packages, assume not installed
             return 1
