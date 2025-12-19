@@ -10,11 +10,11 @@ log_info() {
 }
 
 # Configuration - CUSTOMIZE THESE VALUES
-SHARE_PATH="//192.168.1.100/share"  # Change to your network share path
-MOUNT_POINT="/mnt/network-share"     # Change to your desired mount point
-USERNAME=""                           # Optional: username for authentication
-PASSWORD=""                           # Optional: password for authentication
-FILESYSTEM="cifs"                    # Usually cifs for Windows shares, nfs for NFS
+SHARE_PATH="//192.168.1.100/share"      # Change to your network share path
+MOUNT_POINT="/data/network-share"       # Change to your desired mount point
+USERNAME="user"                         # Optional: username for authentication
+PASSWORD="password"                     # Optional: password for authentication
+FILESYSTEM="nfs"                        # Usually cifs for Windows shares, nfs for NFS
 
 log_info "Setting up network share mount..."
 
