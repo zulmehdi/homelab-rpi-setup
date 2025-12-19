@@ -22,6 +22,7 @@ gitlab-runner
 # MOUNTS=
 # usb-drive
 # network-share
+# nvme-ssd
 # Leave empty if no mounts needed:
 MOUNTS=
 
