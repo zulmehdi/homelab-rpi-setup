@@ -1,0 +1,30 @@
+#cloud-config
+hostname:
+manage_etc_hosts: true
+packages:
+- avahi-daemon
+- git
+apt:
+  conf: |
+    Acquire {
+      Check-Date "false";
+    };
+timezone: Europe/Stockholm
+keyboard:
+  model: pc105
+  layout: "us"
+enable_ssh: true
+users:
+- name:
+  groups: users,adm,dialout,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo
+  shell: /bin/bash
+  lock_passwd: false
+  passwd:
+ssh_pwauth: true
+rpi:
+  interfaces:
+    serial: true
+runcmd:
+  - [ sh, -c, "mkdir -p /home/<USER>/setup" ]
+  - [ sh, -c, "git clone https://github.com/zulmehdi/homelab-rpi-setup.git /home/<USER>/setup" ]
+  - [ sh, -c, "chown -R <USER>:<USER> /home/<USER>/setup" ]
